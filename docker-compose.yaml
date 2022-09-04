@@ -1,0 +1,56 @@
+version: '3'
+
+#настройка сети между контейнерами.
+networks:
+  static-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
+
+services:
+  postgres_db:
+    image: postgres:13
+    container_name: "postgres_db"
+    build: ./custom-postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./custom-postgres/custom_postgresql.conf:/etc/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql.conf
+    environment:
+      - POSTGRES_DB=${DB_DBNAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    env_file:
+      - .env
+    networks:
+      static-network:
+        ipv4_address: 10.5.0.5
+
+  api_py:
+    container_name: "app_fastapi"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5050:5050"
+    depends_on:
+      - postgres_db
+    command: 'bash -c "cd test_task_inside && alembic upgrade head && uvicorn api.main:app --host 0.0.0.0 --port=5050 --reload"'
+    volumes:
+      - /b2market_marketplace
+      - ./alembic:/test_task_inside/alembic
+      - ./api:/test_task_inside/api
+    env_file:
+      - .env
+    networks:
+      static-network:
+        ipv4_address: 10.5.0.6
+
+
+volumes:
+  pgdata: null
