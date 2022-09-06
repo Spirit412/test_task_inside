@@ -69,7 +69,6 @@ def client(session):
     yield TestClient(app)
 
 
-TOKEN = ""
 HEADERS = {"accept": "application/json",
            "Content-Type": "application/x-www-form-urlencoded",
            }
@@ -86,13 +85,14 @@ def test_create_user(client):
     logger.info(f"Ответ: {r.json()}")
     logger.info(f"Ответ: {r.status_code}")
     logger.info(f"Ответ: {r.json()}")
-    logger.info(f"token: {TOKEN[0]}")
+    global TOKEN
     TOKEN = r.json()["token"]
+    logger.info(f"token: {TOKEN}")
     assert r.status_code == 200
 
 
 def test_me(client):
-    HEADERS["Authorization"] = "Bearer " + TOKEN[0]
+    HEADERS["Authorization"] = "Bearer " + TOKEN
     r = client.get("v1/users/me", headers=HEADERS)
     assert r.status_code == 200
     ME.update(r.json())

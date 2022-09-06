@@ -2,6 +2,7 @@ FROM python:3.10
 
 COPY ./alembic /test_task_inside/alembic
 COPY ./api /test_task_inside/api
+COPY ./tests /test_task_inside/tests
 COPY ./requirements.txt /test_task_inside
 COPY ./alembic.ini /test_task_inside
 
