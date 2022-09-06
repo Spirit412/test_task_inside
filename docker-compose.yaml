@@ -1,13 +1,5 @@
 version: '3'
 
-#настройка сети между контейнерами.
-networks:
-  static-network:
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.5.0.0/16
-
 services:
   postgres_db:
     image: postgres:13
@@ -26,9 +18,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     env_file:
       - .env
-    networks:
-      static-network:
-        ipv4_address: 10.5.0.5
+
 
   api_py:
     container_name: "app_fastapi"
@@ -47,9 +37,6 @@ services:
       - ./api:/test_task_inside/api
     env_file:
       - .env
-    networks:
-      static-network:
-        ipv4_address: 10.5.0.6
 
 
 volumes:

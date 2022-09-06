@@ -2,17 +2,6 @@ from fastapi import HTTPException, status
 
 ###################   AUTH   ###################
 
-EXCEPTION_EMAIL_REGISTERED = HTTPException(
-    status_code=status.HTTP_409_CONFLICT,
-    detail="This email already registered.",
-    headers={"WWW-Authenticate": "Bearer"}
-)
-
-EXCEPTION_EMAIL_FORMAT = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="Could not validate credentials. Bad email format.",
-    headers={"WWW-Authenticate": "Bearer"}
-)
 
 EXCEPTION_PASSWORD = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -26,9 +15,9 @@ EXCEPTION_TOKEN = HTTPException(
     headers={"WWW-Authenticate": "Bearer"}
 )
 
-EXCEPTION_EMAIL_DOESNT_EXISTS = HTTPException(
-    status_code=status.HTTP_409_CONFLICT,
-    detail="Email doesn't exists.",
+EXCEPTION_TOKEN_EXPIRED = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Token expired. Get new one.",
     headers={"WWW-Authenticate": "Bearer"}
 )
 
@@ -39,7 +28,12 @@ EXCEPTION = HTTPException(
 )
 
 
-###################   SCHEMAS FIELDS VALIDATION   ###################
+EXCEPTION_USER_EXISTS = HTTPException(
+    status_code=status.HTTP_409_CONFLICT,
+    detail="User with this name already exists.",
+    headers={"WWW-Authenticate": "Bearer"}
+)
+"""Пользователь с таким именем уже существует"""
 
 
 def raise_validation_error(field: str):
@@ -49,26 +43,6 @@ def raise_validation_error(field: str):
         detail=f"Поле {field} не прошло валидацию.",
         headers={"WWW-Authenticate": "Bearer"}
     )
-
-
-###################   ORGANIZATION VALIDATE EXCEPTIONS   ###################
-
-def raise_logic_exception(message: str):
-    raise HTTPException(
-        status_code=status.HTTP_409_CONFLICT,
-        detail=message,
-        headers={"WWW-Authenticate": "Bearer"}
-    )
-
-
-###################   USER VASLIDATE EXCEPTIONS   ###################
-
-EXCEPTION_USER_EXISTS = HTTPException(
-    status_code=status.HTTP_409_CONFLICT,
-    detail="User with this email already exists.",
-    headers={"WWW-Authenticate": "Bearer"}
-)
-"""Пользователь с таким адресом электронной почты уже существует"""
 
 
 ###################   SQLALCHEMY   ###################
@@ -92,3 +66,11 @@ USER_NOT_EXISTS = HTTPException(
     detail='User is not exists',
     headers={"WWW-Authenticate": "Bearer"}
 )
+
+
+def raise_user_create_message():
+    raise HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail='Пользователь с данным токеном не может создать сообщение под чужим пользователем',
+        headers={"WWW-Authenticate": "Bearer"}
+    )

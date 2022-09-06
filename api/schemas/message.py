@@ -5,8 +5,13 @@ class MessageBase(BaseModel):
     message: str
 
 
-class CreateMessage(MessageBase):
-    user_id: int
+class GetMessage(MessageBase):
+    name: str
+
+
+class MessageCreate(BaseModel):
+    name: str
+    message: str
 
 
 class MessageDB(MessageBase):

@@ -50,11 +50,12 @@ async def validation_exception_handler(request, exc):
 
     return JSONResponse(response, status_code=422)
 
+
 @app.get("/v1/openapi.json")
 async def get_openapi_json(request: Request):
     return JSONResponse(get_openapi(
         title="API",
         version="1.0.0",
-        description="**Апи**",
+        description="**Апи тестового задания**",
         routes=app.routes
     ))

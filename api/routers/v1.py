@@ -5,6 +5,7 @@ from api.database.decorators import managed_transaction
 from api.database.sqlalchemy_connection import get_session
 from api.factories.user import UserFactory
 from api.routers.v1_routers.user import user_router
+from api.routers.v1_routers.message import message_router
 from api.schemas.token import Token
 from api.schemas.user import UserCreate
 
@@ -16,6 +17,7 @@ v1_router = APIRouter(
 )
 
 v1_router.include_router(user_router)
+v1_router.include_router(message_router)
 
 
 @v1_router.post('/signup', response_model=Token)
@@ -26,4 +28,4 @@ async def signup(user: UserCreate,
                  user_factory: UserFactory = Depends(),
                  ):
     access_token = user_factory.create_user(session=session, user=user)
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"token": access_token}

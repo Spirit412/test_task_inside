@@ -8,6 +8,8 @@ from api.database.sqlalchemy_connection import get_session
 
 
 def managed_transaction(func):
+    """Простой декоратор для роутов для с транзакциями. 
+    Если HTTPException, то rollback. Иначе commit"""
     @functools.wraps(func)
     async def wrap_func(*args, session: Session = Depends(get_session), **kwargs):
         try:
@@ -19,7 +21,6 @@ def managed_transaction(func):
         except HTTPException as e:
             session.rollback()
             raise e
-        # don't close session here, or you won't be able to response
         return result
 
     return wrap_func
